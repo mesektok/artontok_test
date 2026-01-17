@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ARTonTOK (아트온톡) - 상위 0.1% 부자 클럽</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Noto+Sans+KR:wght@300;400;700;900&display=swap" rel="stylesheet"/>
+  <style>
+    body { background-color: #050505; color: #ffffff; margin: 0; font-family: 'Montserrat', 'Noto Sans KR', sans-serif; overflow-x: hidden; }
+    .gold-glow { text-shadow: 0 0 15px rgba(212, 175, 55, 0.6), 2px 2px 4px rgba(0,0,0,0.8); }
+    .ambient-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background-image: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.8)), url('https://r.jina.ai/i/6082498263724c7dbb9fcc963870624d'); background-size: cover; background-position: center; }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #000; }
+    ::-webkit-scrollbar-thumb { background: #D4AF37; border-radius: 10px; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- 라이브러리 로드 설정 -->
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@19.2.3",
+    "react-dom/client": "https://esm.sh/react-dom@19.2.3/client",
+    "lucide-react": "https://esm.sh/lucide-react@0.562.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/"
+  }
+}
+</script>
+
+  <!-- 메인 애플리케이션 통합 스크립트 -->
+  <script type="module">
+  // <![CDATA[
+    import React, { useState, useEffect } from 'react';
+    import ReactDOM from 'react-dom/client';
+    import { 
+      Crown, Globe, Menu, Newspaper, Award, Clock, ArrowRight, 
+      Mail, Phone, Send, ChevronLeft, ChevronRight, Layout, 
+      Edit3, FileText, Settings, Plus, Save, Trash2 
+    } from 'lucide-react';
+
+    // --- 1. Constants & Data ---
+    const INITIAL_CONFIG = {
+      primaryColor: '#D4AF37',
+      siteName: 'ARTonTOK',
+      seoTitle: 'ARTonTOK - 상위 0.1%를 위한 아트·독서코칭',
+      seoDescription: '상위 0.1% 부자 클럽의 아트·독서코칭연구회 & 비즈니스 클럽'
+    };
+
+    const INITIAL_CONTENT = {
+      heroTitle: { KOR: '상위 0.1% 부자 클럽의 아트·독서코칭연구회', ENG: 'Art & Reading Coaching for the Top 0.1%' },
+      heroSub: { KOR: '비즈니스 클럽 1기 초대 : 예술적 통찰로 부의 품격을 완성하다', ENG: 'Business Club 1st Invitation: Completing Wealth with Artistic Insight' },
+      newsSectionTitle: { KOR: 'Global Art & Wealth News', ENG: 'Art News' },
+      coachingSectionTitle: { KOR: 'Elite Coaching Records', ENG: 'Art Coaching Records' }
+    };
+
+    const TRANSLATIONS = {
+      navHome: { KOR: '홈', ENG: 'Home' },
+      navNews: { KOR: '아트 뉴스', ENG: 'Art News' },
+      navCoaching: { KOR: '아트 코칭', ENG: 'Art Coaching' },
+      navSchedule: { KOR: '클럽 일정', ENG: 'Schedule' },
+      navAdmin: { KOR: '관리자', ENG: 'Admin' },
+      btnLearnMore: { KOR: '상세보기', ENG: 'Learn More' },
+      btnExploreCoaching: { KOR: '마스터 코칭 둘러보기', ENG: 'EXPLORE ELITE COACHING' },
+      btnJoinClub: { KOR: '비즈니스 클럽 가입하기', ENG: 'JOIN BUSINESS CLUB' },
+      btnSubmit: { KOR: '문의 보내기', ENG: 'Send Inquiry' }
+    };
+
+    const SAMPLE_POSTS = [
+      { id: 'n1', type: 'news', title: { KOR: '2025 글로벌 자산가 아트 테크', ENG: 'Art Tech 2025' }, imageUrl: 'https://images.unsplash.com/photo-1574350800174-8182f6479717?q=80&w=800&auto=format&fit=crop', date: '2024-05-22' },
+      { id: 'c1', type: 'coaching', title: { KOR: '리더를 위한 인문학적 미학', ENG: 'Aesthetics for Leaders' }, imageUrl: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=800&auto=format&fit=crop', date: '2024-04-12' }
+    ];
+
+    const SAMPLE_EVENTS = [
+      { id: 'e1', title: { KOR: '1기 비즈니스 클럽 오프닝', ENG: 'Business Club Opening' }, date: new Date().toISOString().split('T')[0], time: '18:30 - 20:30' }
+    ];
+
+    // --- 2. Components ---
+    const Button = ({ children, variant = 'primary', size = 'md', className = '', ...props }) => {
+      const baseStyles = 'inline-flex items-center justify-center font-bold tracking-tight transition-all duration-300 rounded-full focus:outline-none uppercase';
+      const variants = {
+        primary: 'bg-[#D4AF37] text-black hover:bg-[#FFD700] shadow-lg shadow-[#D4AF37]/20',
+        outline: 'border-2 border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37] hover:text-black'
+      };
+      const sizes = { sm: 'px-5 py-2 text-xs', md: 'px-8 py-3 text-sm', lg: 'px-10 py-4 text-base' };
+      return <button className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`} {...props}>{children}</button>;
+    };
+
+    const Calendar = ({ events, language, onSelectEvent }) => {
+      const [currentDate, setCurrentDate] = useState(new Date());
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      const daysInMonth = (y, m) => new Date(y, m + 1, 0).getDate();
+      const firstDay = (y, m) => new Date(y, m, 1).getDay();
+      
+      const dayCells = [];
+      for (let i = 0; i < firstDay(year, month); i++) dayCells.push(<div key={`e-${i}`} className="h-24 sm:h-32 border border-[#D4AF37]/5"></div>);
+      for (let d = 1; d <= daysInMonth(year, month); d++) {
+        const dStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        const dayEvents = events.filter(e => e.date === dStr);
+        dayCells.push(
+          <div key={d} className="h-24 sm:h-32 border border-[#D4AF37]/5 bg-black/40 p-2 hover:bg-[#D4AF37]/5 transition-all">
+            <span className="text-[10px] text-zinc-600 font-bold">{d}</span>
+            <div className="mt-1 space-y-1">
+              {dayEvents.map(ev => (
+                <div key={ev.id} className="bg-[#D4AF37]/10 border-l border-[#D4AF37] text-[8px] p-1 text-[#D4AF37] truncate">
+                  {ev.title[language]}
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      }
+
+      return (
+        <div className="w-full max-w-5xl mx-auto bg-black/60 border border-[#D4AF37]/20 rounded-3xl overflow-hidden shadow-2xl">
+          <div className="flex justify-between items-center p-6 border-b border-[#D4AF37]/10">
+            <h3 className="text-xl font-black gold-glow uppercase tracking-widest">{year}.{month + 1}</h3>
+            <div className="flex gap-2">
+              <button onClick={() => setCurrentDate(new Date(year, month - 1))} className="p-2 bg-[#D4AF37]/10 rounded-full"><ChevronLeft size={16}/></button>
+              <button onClick={() => setCurrentDate(new Date(year, month + 1))} className="p-2 bg-[#D4AF37]/10 rounded-full"><ChevronRight size={16}/></button>
+            </div>
+          </div>
+          <div className="grid grid-cols-7 text-center py-2 text-[8px] font-bold text-[#D4AF37]/50 border-b border-[#D4AF37]/10 uppercase">
+            {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => <div key={d}>{d}</div>)}
+          </div>
+          <div className="grid grid-cols-7">{dayCells}</div>
+        </div>
+      );
+    };
+
+    const ContactSection = ({ language }) => {
+      return (
+        <section className="py-20 px-6 max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl font-black mb-6 gold-glow">{language === 'KOR' ? '예술의 여정을 시작하세요' : 'Start Your Journey'}</h2>
+          <form className="space-y-4 bg-zinc-900/50 p-8 rounded-3xl border border-[#D4AF37]/20">
+            <input placeholder="Name" className="w-full bg-black border border-zinc-800 p-4 rounded-xl focus:border-[#D4AF37] outline-none" />
+            <input placeholder="Email" className="w-full bg-black border border-zinc-800 p-4 rounded-xl focus:border-[#D4AF37] outline-none" />
+            <textarea placeholder="Message" className="w-full bg-black border border-zinc-800 p-4 rounded-xl focus:border-[#D4AF37] outline-none h-32"></textarea>
+            <Button className="w-full">{TRANSLATIONS.btnSubmit[language]}</Button>
+          </form>
+        </section>
+      );
+    };
+
+    // --- 3. Main App ---
+    const App = () => {
+      const [lang, setLang] = useState('KOR');
+      const [activePage, setActivePage] = useState('home');
+
+      return (
+        <div className="relative min-h-screen">
+          <div className="ambient-bg" />
+          
+          <nav className="fixed top-0 w-full z-50 bg-black/80 backdrop-blur-xl border-b border-[#D4AF37]/20 h-20 flex items-center justify-between px-6">
+            <div className="text-xl font-black gold-glow flex items-center gap-2 tracking-tighter cursor-pointer" onClick={() => setActivePage('home')}>
+              <Crown className="text-[#D4AF37]" /> ARTonTOK
+            </div>
+            <div className="flex gap-4 sm:gap-8 items-center">
+              <button onClick={() => setActivePage('news')} className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-[#D4AF37]">News</button>
+              <button onClick={() => setActivePage('schedule')} className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-[#D4AF37]">Schedule</button>
+              <button onClick={() => setLang(lang === 'KOR' ? 'ENG' : 'KOR')} className="text-[10px] font-black border border-[#D4AF37] px-3 py-1 rounded-full text-[#D4AF37]">
+                {lang === 'KOR' ? 'EN' : 'KR'}
+              </button>
+            </div>
+          </nav>
+
+          <main className="pt-20">
+            {activePage === 'home' && (
+              <>
+                <section className="h-[90vh] flex flex-col items-center justify-center text-center px-6">
+                  <h1 className="text-4xl md:text-6xl font-black mb-8 gold-glow leading-tight">
+                    {INITIAL_CONTENT.heroTitle[lang]}
+                  </h1>
+                  <p className="text-zinc-400 max-w-2xl mb-12 text-sm md:text-base">{INITIAL_CONTENT.heroSub[lang]}</p>
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <Button size="lg" className="w-64" onClick={() => setActivePage('schedule')}>{TRANSLATIONS.btnJoinClub[lang]}</Button>
+                    <Button variant="outline" size="lg" className="w-64">{TRANSLATIONS.btnExploreCoaching[lang]}</Button>
+                  </div>
+                </section>
+                <ContactSection language={lang} />
+              </>
+            )}
+
+            {activePage === 'news' && (
+              <section className="py-20 px-6 max-w-6xl mx-auto">
+                <h2 className="text-3xl font-black mb-12 gold-glow uppercase tracking-widest text-center">Art & Wealth News</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {SAMPLE_POSTS.map(post => (
+                    <div key={post.id} className="bg-zinc-900/50 rounded-3xl overflow-hidden border border-zinc-800 hover:border-[#D4AF37] transition-all group">
+                      <img src={post.imageUrl} className="h-64 w-full object-cover group-hover:scale-105 transition-transform" />
+                      <div className="p-8">
+                        <span className="text-[10px] text-[#D4AF37] font-bold">{post.date}</span>
+                        <h3 className="text-xl font-bold mt-2 mb-4">{post.title[lang]}</h3>
+                        <Button variant="outline" size="sm">Learn More</Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {activePage === 'schedule' && (
+              <div className="py-20 px-4">
+                <h2 className="text-3xl font-black mb-12 gold-glow text-center uppercase tracking-widest">Global Schedule</h2>
+                <Calendar events={SAMPLE_EVENTS} language={lang} />
+              </div>
+            )}
+          </main>
+
+          <footer className="py-12 border-t border-zinc-900 bg-black text-center">
+            <p className="text-[10px] text-zinc-600 tracking-widest uppercase">&copy; 2024 ARTonTOK. All rights reserved.</p>
+          </footer>
+        </div>
+      );
+    };
+
+    // --- Render ---
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  // ]]>
+  </script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "name": "ARTonTOK (아트온톡)",
+  "description": "A high-end artistic platform for Art Coaching and Art News, featuring a modern black and gold aesthetic with an integrated education management system and admin dashboard.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
